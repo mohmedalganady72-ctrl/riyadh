@@ -1,0 +1,27 @@
+---
+import { UI, NAV, FOOT, CONTACT, SOCIAL, PAGES } from '../data/site.js';
+import { href } from '../lib/views.js';
+import { LOGO } from '../data/logo.js';
+const { lang } = Astro.props;
+const t = (o: any) => o[lang], u = (k: string) => UI[k][lang];
+const all = Object.fromEntries(NAV.flatMap((n) => (n.k ? n.k.map((k) => [k[0], k[1]]) : [[n.id, n.t]])));
+all.projects = NAV[2].t; all.contact = UI.contact;
+const social = SOCIAL.filter((s) => s.url);
+const legal = ['privacy', 'terms'];
+---
+<footer><div class="wrap">
+<!-- .rv-seq: columns enter left→right (inline-start→end), and inside each column the items enter one after another, top → bottom -->
+<div class="fg rv-seq">
+  <div style="--d:0ms"><a class="logo sq" style="--k:0" href={href(lang)} aria-label={u('homeAria')}><svg viewBox={`0 0 ${LOGO[lang].w} ${LOGO[lang].h}`} width={Math.round(LOGO[lang].w * 48 / LOGO[lang].h)} height="48" aria-hidden="true" focusable="false"><use href="#lg"></use></svg></a>
+    <p class="fnl sq" style="--k:1">{u('fText')}</p>
+    <div class="nl sq" style="--k:2"><a class="btn" href={`tel:${CONTACT.tel}`}>{u('call')}</a><a class="btn" href={`https://wa.me/${CONTACT.wa}`} rel="noopener">{u('wa')}</a></div></div>
+  {FOOT.map((c, ci) => <div style={`--d:${(ci + 1) * 90}ms`}><h3 class="sq" style="--k:0">{t(c[0])}</h3><ul>{c[1].map((id, j) => <li class="sq" style={`--k:${j + 1}`}><a href={href(lang, id)}>{t(all[id])}</a></li>)}</ul></div>)}
+  <div style={`--d:${(FOOT.length + 1) * 90}ms`}><h3 class="sq" style="--k:0">{u('fFollow')}</h3><ul>
+    <li class="sq" style="--k:1"><a href={`tel:${CONTACT.tel}`} dir="ltr">{CONTACT.phone}</a></li>
+    <li class="sq" style="--k:2"><a href={`https://wa.me/${CONTACT.wa}`} rel="noopener">{u('wa')}</a></li>
+    <li class="sq" style="--k:3"><a href={`mailto:${CONTACT.email}`} dir="ltr">{CONTACT.email}</a></li>
+    {social.map((s, i) => <li class="sq" style={`--k:${4 + i}`}><a href={s.url} rel="me noopener" target="_blank">{s.label}<span class="sr"> ({u('newTab')})</span></a></li>)}
+  </ul></div>
+</div>
+<div class="fb"><span>{u('rights')}</span><nav aria-label={u('legal')}>{legal.map((id) => <a href={href(lang, id)}>{PAGES[id].t[lang]}</a>)}</nav></div>
+</div></footer>
